@@ -1,9 +1,14 @@
 services:
   api:
-    build: .
+    build:
+      context: .
+      target: dev
+    container_name: assettracker-api
     env_file:
       - .env
-    container_name: assettracker-api
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2
     depends_on:
       - db
     ports:
