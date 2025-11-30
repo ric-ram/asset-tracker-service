@@ -1,16 +1,23 @@
 services:
+  api:
+    build: .
+    env_file:
+      - .env
+    container_name: assettracker-api
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
   db:
-    image: postgres
+    image: postgres:latest
     restart: always
     container_name: assettracker-db
     volumes:
-      - db:/var/lib/postgressql/data
+      - db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-    expose:
-      - ${DB_HOST}
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 10s
