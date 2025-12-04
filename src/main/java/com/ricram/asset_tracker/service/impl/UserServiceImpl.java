@@ -6,9 +6,11 @@ import com.ricram.asset_tracker.entity.User;
 import com.ricram.asset_tracker.repository.UserRepository;
 import com.ricram.asset_tracker.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public CreateUserRespDto createUser(CreateUserReqDto userReqDto) {
+        if (userRepository.existsByEmail(userReqDto.email())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Email already in use: " + userReqDto.email()
+            );
+        }
+
         String passwordHash = passwordEncoder.encode(userReqDto.password());
         User newUser = User.builder()
                 .email(userReqDto.email())
