@@ -1,6 +1,5 @@
 package com.ricram.asset_tracker.repository;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.ricram.asset_tracker.entity.Asset;
 import org.springframework.data.jpa.repository.JpaRepository;
 
