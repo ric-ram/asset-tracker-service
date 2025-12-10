@@ -28,9 +28,4 @@ public class UserController {
                 .created(location)
                 .body(dto);
     }
-
-    @GetMapping("/ping")
-    public String ping() {
-        return "ok";
-    }
 }

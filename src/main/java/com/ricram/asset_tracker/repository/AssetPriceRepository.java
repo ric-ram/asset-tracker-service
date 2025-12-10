@@ -1,6 +1,5 @@
 package com.ricram.asset_tracker.repository;
 
-import com.ricram.asset_tracker.entity.Asset;
 import com.ricram.asset_tracker.entity.AssetPrice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
