@@ -84,7 +84,7 @@ public class UserServiceImplTests {
         assertNotNull(savedUser.getCreatedAt());
 
         verify(userRepository).existsByEmail(email);
-        verify(userRepository).save(any(User.class));
+        verify(userRepository).save(savedUser);
         verifyNoMoreInteractions(userRepository);
     }
 

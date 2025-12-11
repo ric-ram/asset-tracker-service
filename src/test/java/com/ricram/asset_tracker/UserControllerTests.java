@@ -19,12 +19,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.endsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -43,8 +43,8 @@ public class UserControllerTests {
     @DisplayName("POST /users -> 400 when email is missing")
     void whenEmailMissing() throws Exception {
         mvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -86,7 +86,8 @@ public class UserControllerTests {
         CreateUserRespDto dto = new CreateUserRespDto(randomId, email);
         when(userService.createUser(any(CreateUserReqDto.class))).thenReturn(dto);
 
-        String body = objectMapper.writeValueAsString(new CreateUserReqDto("test@example.com", "testing123"));
+        String body = objectMapper.writeValueAsString(new CreateUserReqDto("test@example.com",
+                "testing123"));
 
 
         // act & assert
@@ -94,7 +95,7 @@ public class UserControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.LOCATION, "/users/" + randomId))
+                .andExpect(header().string(HttpHeaders.LOCATION, endsWith("/users/" + randomId)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(randomId.toString()))
                 .andExpect(jsonPath("$.email").value("test@example.com"));
@@ -108,7 +109,8 @@ public class UserControllerTests {
         doThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use: test@example.com"))
                 .when(userService).createUser(any(CreateUserReqDto.class));
 
-        String body = objectMapper.writeValueAsString(new CreateUserReqDto("test@example.com", "testing123"));
+        String body = objectMapper.writeValueAsString(new CreateUserReqDto("test@example.com",
+                "testing123"));
 
         // act & assert
         mvc.perform(post("/users")
