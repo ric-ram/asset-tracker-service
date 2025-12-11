@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,5 +32,10 @@ public class PortfolioController {
         return ResponseEntity
                 .created(location)
                 .body(resp);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PortfolioRespDto>> listPortfolios(@PathVariable UUID userId) {
+        return null;
     }
 }
