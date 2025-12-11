@@ -36,6 +36,10 @@ public class PortfolioController {
 
     @GetMapping
     public ResponseEntity<List<PortfolioRespDto>> listPortfolios(@PathVariable UUID userId) {
-        return null;
+        List<PortfolioRespDto> resp = portfolioService.listPortfoliosForUser(userId);
+
+        return ResponseEntity
+                .ok()
+                .body(resp);
     }
 }

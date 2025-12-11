@@ -193,11 +193,11 @@ public class PortfolioControllerTests {
                 .andExpect(jsonPath("$[0].id").value(p1Id.toString()))
                 .andExpect(jsonPath("$[0].name").value("Long term"))
                 .andExpect(jsonPath("$[0].baseCurrency").value("USD"))
-                .andExpect(jsonPath("$[0].archived").value(false))
+                .andExpect(jsonPath("$[0].isArchived").value(false))
                 .andExpect(jsonPath("$[1].id").value(p2Id.toString()))
                 .andExpect(jsonPath("$[1].name").value("Short term"))
                 .andExpect(jsonPath("$[1].baseCurrency").value("EUR"))
-                .andExpect(jsonPath("$[1].archived").value(true));
+                .andExpect(jsonPath("$[1].isArchived").value(true));
 
         verify(portfolioService).listPortfoliosForUser(eq(userId));
         verifyNoMoreInteractions(portfolioService);
