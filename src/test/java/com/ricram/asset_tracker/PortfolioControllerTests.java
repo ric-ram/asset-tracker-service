@@ -3,7 +3,7 @@ package com.ricram.asset_tracker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ricram.asset_tracker.controller.PortfolioController;
 import com.ricram.asset_tracker.dto.CreatePortfolioReqDto;
-import com.ricram.asset_tracker.dto.CreatePortfolioRespDto;
+import com.ricram.asset_tracker.dto.PortfolioRespDto;
 import com.ricram.asset_tracker.service.PortfolioService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,7 +72,7 @@ public class PortfolioControllerTests {
         // arrange
         UUID userId = UUID.randomUUID();
         UUID portfolioID = UUID.randomUUID();
-        CreatePortfolioRespDto resp = new CreatePortfolioRespDto(
+        PortfolioRespDto resp = new PortfolioRespDto(
                 portfolioID,
                 "test",
                 null,
@@ -105,7 +105,7 @@ public class PortfolioControllerTests {
         // arrange
         UUID userId = UUID.randomUUID();
         UUID portfolioID = UUID.randomUUID();
-        CreatePortfolioRespDto resp = new CreatePortfolioRespDto(
+        PortfolioRespDto resp = new PortfolioRespDto(
                 portfolioID,
                 "test",
                 null,

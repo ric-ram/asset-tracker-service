@@ -1,7 +1,7 @@
 package com.ricram.asset_tracker.service;
 
 import com.ricram.asset_tracker.dto.CreatePortfolioReqDto;
-import com.ricram.asset_tracker.dto.CreatePortfolioRespDto;
+import com.ricram.asset_tracker.dto.PortfolioRespDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +17,7 @@ public interface PortfolioService {
      * @param portfolioReqDto payload containing the portfolio information
      * @return the recently created portfolio
      */
-    CreatePortfolioRespDto createPortfolioForUser(UUID userId, CreatePortfolioReqDto portfolioReqDto);
+    PortfolioRespDto createPortfolioForUser(UUID userId, CreatePortfolioReqDto portfolioReqDto);
 
     /**
      * Lists all the portfolios belonging to a user
@@ -25,5 +25,5 @@ public interface PortfolioService {
      * @param userId user ID of the owner of the portfolios
      * @return a list containing all the portfolios belonging to the user
      */
-    List<CreatePortfolioRespDto> listPortfoliosForUser(UUID userId);
+    List<PortfolioRespDto> listPortfoliosForUser(UUID userId);
 }
