@@ -3,7 +3,7 @@ package com.ricram.asset_tracker.dto;
 import java.time.Instant;
 import java.util.UUID;
 
-public record CreatePortfolioRespDto(
+public record PortfolioRespDto(
        UUID id,
        String name,
        String description,
