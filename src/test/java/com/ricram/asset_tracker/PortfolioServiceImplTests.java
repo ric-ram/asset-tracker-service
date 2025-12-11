@@ -109,7 +109,7 @@ public class PortfolioServiceImplTests {
     void listPortfoliosWithNonExistentUser() {
 
         UUID userId = UUID.randomUUID();
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userRepository.existsById(userId)).thenReturn(false);
 
         ResponseStatusException ex = assertThrows(
                 ResponseStatusException.class,
@@ -118,7 +118,7 @@ public class PortfolioServiceImplTests {
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
         assertTrue(ex.getReason().contains("user not found"));
 
-        verify(userRepository).findById(userId);
+        verify(userRepository).existsById(userId);
         verifyNoMoreInteractions(userRepository);
         verifyNoMoreInteractions(portfolioRepository);
     }
@@ -134,7 +134,7 @@ public class PortfolioServiceImplTests {
                 Instant.parse("2025-12-04T12:00:00Z"),
                 Instant.parse("2025-12-04T12:00:00Z"));
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.existsById(userId)).thenReturn(true);
 
         when(portfolioRepository.findByUserId(userId, sort)).thenReturn(List.of());
 
@@ -143,7 +143,7 @@ public class PortfolioServiceImplTests {
         assertNotNull(resp);
         assertTrue(resp.isEmpty());
 
-        verify(userRepository).findById(userId);
+        verify(userRepository).existsById(userId);
         verify(portfolioRepository).findByUserId(userId, sort);
         verifyNoMoreInteractions(userRepository);
         verifyNoMoreInteractions(portfolioRepository);
@@ -186,7 +186,7 @@ public class PortfolioServiceImplTests {
                 .updatedAt(Instant.parse("2025-12-03T10:00:00Z"))
                 .build();
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.existsById(userId)).thenReturn(true);
 
         when(portfolioRepository.findByUserId(userId, sort)).thenReturn(List.of(p1, p2));
 
@@ -209,7 +209,7 @@ public class PortfolioServiceImplTests {
 
         assertTrue(first.createdAt().isAfter(second.createdAt()));
 
-        verify(userRepository).findById(userId);
+        verify(userRepository).existsById(userId);
         verify(portfolioRepository).findByUserId(userId, sort);
         verifyNoMoreInteractions(userRepository);
         verifyNoMoreInteractions(portfolioRepository);
