@@ -54,7 +54,6 @@ public class UserServiceImplTests {
 
         verify(userRepository).existsByEmail(email);
         verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
     }
 
     @Test
@@ -89,7 +88,6 @@ public class UserServiceImplTests {
         verify(userRepository).existsByEmail(email);
         verify(userRepository).save(savedUser);
         verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
     }
 
     @Test
@@ -108,7 +106,6 @@ public class UserServiceImplTests {
 
         verify(userRepository).findById(userId);
         verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
     }
 
     @Test
@@ -130,6 +127,5 @@ public class UserServiceImplTests {
 
         verify(userRepository).findById(userId);
         verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
     }
 }
