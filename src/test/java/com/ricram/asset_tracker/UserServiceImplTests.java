@@ -2,6 +2,7 @@ package com.ricram.asset_tracker;
 
 import com.ricram.asset_tracker.dto.CreateUserReqDto;
 import com.ricram.asset_tracker.dto.CreateUserRespDto;
+import com.ricram.asset_tracker.dto.UserInfoDto;
 import com.ricram.asset_tracker.entity.User;
 import com.ricram.asset_tracker.repository.UserRepository;
 import com.ricram.asset_tracker.service.impl.UserServiceImpl;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,6 +54,7 @@ public class UserServiceImplTests {
 
         verify(userRepository).existsByEmail(email);
         verifyNoMoreInteractions(userRepository);
+        verifyNoInteractions(passwordEncoder);
     }
 
     @Test
@@ -86,6 +89,47 @@ public class UserServiceImplTests {
         verify(userRepository).existsByEmail(email);
         verify(userRepository).save(savedUser);
         verifyNoMoreInteractions(userRepository);
+        verifyNoInteractions(passwordEncoder);
     }
 
+    @Test
+    @DisplayName("getUserInfo() -> User not found")
+    void getUserInfoWithNonExistentUser() {
+        UUID userId = UUID.randomUUID();
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
+                () -> userService.getUserInfo(userId)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+        assertTrue(ex.getReason().contains("user not found"));
+
+        verify(userRepository).findById(userId);
+        verifyNoMoreInteractions(userRepository);
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    @DisplayName("getUserInfo() -> Success when user exists")
+    void getUserInfoSuccessfully() {
+        UUID userId = UUID.randomUUID();
+        User existingUser = new User(userId,
+                "test@email.com",
+                "passhash",
+                Instant.parse("2025-12-04T12:00:00Z"),
+                Instant.parse("2025-12-04T12:00:00Z"));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+
+        UserInfoDto resp = userService.getUserInfo(userId);
+
+        assertEquals(existingUser.getEmail(), resp.email());
+        assertEquals(existingUser.getCreatedAt(), resp.createdAt());
+        assertEquals(existingUser.getUpdatedAt(), resp.updatedAt());
+
+        verify(userRepository).findById(userId);
+        verifyNoMoreInteractions(userRepository);
+        verifyNoInteractions(passwordEncoder);
+    }
 }
