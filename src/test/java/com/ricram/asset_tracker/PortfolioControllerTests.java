@@ -147,7 +147,7 @@ public class PortfolioControllerTests {
         mvc.perform(get("/users/" + userId + "/portfolios"))
                 .andExpect(status().isNotFound());
 
-        verify(portfolioService).listPortfoliosForUser((eq(userId)));
+        verify(portfolioService).listPortfoliosForUser(eq(userId));
         verifyNoMoreInteractions(portfolioService);
     }
 

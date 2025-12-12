@@ -1,9 +1,12 @@
 package com.ricram.asset_tracker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import com.ricram.asset_tracker.controller.UserController;
 import com.ricram.asset_tracker.dto.CreateUserReqDto;
 import com.ricram.asset_tracker.dto.CreateUserRespDto;
+import com.ricram.asset_tracker.dto.UserInfoDto;
+import com.ricram.asset_tracker.entity.User;
 import com.ricram.asset_tracker.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,12 +20,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -146,5 +151,39 @@ public class UserControllerTests {
                         .content("{ \"email\": \"testing@email.com\" " +
                                 "\"password\": \"short\"}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("GET /users/{userId} -> 404 when user does not exist")
+    void whenNonExistentUser() throws Exception {
+        UUID userId = UUID.randomUUID();
+        when(userService.getUserInfo(eq(userId)))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+
+        mvc.perform(get("/users/" + userId))
+                .andExpect(status().isNotFound());
+
+        verify(userService).getUserInfo(eq(userId));
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
+    @DisplayName("GET /users/{userId} -> 200 when user exists")
+    void whenUserExists() throws Exception {
+        UUID userId = UUID.randomUUID();
+        UserInfoDto userInfo = new UserInfoDto("test@email.com",
+                Instant.parse("2025-12-04T12:00:00Z"),
+                Instant.parse("2025-12-04T12:00:00Z"));
+        when(userService.getUserInfo(eq(userId))).thenReturn(userInfo);
+
+        mvc.perform(get("/users/" + userId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.email").value(userInfo.email()))
+                .andExpect(jsonPath("$.createdAt").value(userInfo.createdAt().toString()))
+                .andExpect(jsonPath("$.updatedAt").value(userInfo.updatedAt().toString()));
+
+        verify(userService).getUserInfo(eq(userId));
+        verifyNoMoreInteractions(userService);
     }
 }

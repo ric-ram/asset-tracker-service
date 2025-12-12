@@ -2,6 +2,7 @@ package com.ricram.asset_tracker.service.impl;
 
 import com.ricram.asset_tracker.dto.CreateUserReqDto;
 import com.ricram.asset_tracker.dto.CreateUserRespDto;
+import com.ricram.asset_tracker.dto.UserInfoDto;
 import com.ricram.asset_tracker.entity.User;
 import com.ricram.asset_tracker.repository.UserRepository;
 import com.ricram.asset_tracker.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +43,19 @@ public class UserServiceImpl implements UserService {
         return new CreateUserRespDto(
                 savedUser.getId(),
                 savedUser.getEmail()
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfoDto getUserInfo(UUID userId) {
+        User currentUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+
+        return new UserInfoDto(
+                currentUser.getEmail(),
+                currentUser.getCreatedAt(),
+                currentUser.getUpdatedAt()
         );
     }
 }
